@@ -49,7 +49,7 @@
     <div id="loginScreen">
         <div id="loginBox">
             <h2>🔐 Login Admin</h2>
-            <input type="password" id="adminPass" placeholder="Password: admin123" />
+            <input type="password" id="adminPass" placeholder="Password:..." />
             <button id="loginBtn">Masuk</button>
             <p id="loginError" style="color:red; display:none;">Password salah!</p>
         </div>
@@ -94,6 +94,7 @@
         <div id="chatSection" style="display:none; display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
             <div><h2>📢 Running Text</h2><textarea id="adminMessageInput" placeholder="Pesan info..."></textarea><button id="sendAdminMessageBtn" style="width:100%;">Kirim</button></div>
             <div><h2>💬 Pesan Masuk</h2><ul id="participantChatList"></ul></div>
+            <button class="btn-danger" id="clearChatBtn" style="padding: 5px 12px; font-size: 0.8rem; margin: 0;">Bersihkan Chat</button>
         </div>
         
         <div id="shareScreenSection" style="display:none;">
@@ -210,6 +211,15 @@
                 }
             }, 3000);
         }
+
+        // -- CLEAR ALL CHAT --
+        document.getElementById("clearChatBtn").onclick = () => {
+            if(confirm("Apakah Anda yakin ingin MENGHAPUS SEMUA CHAT dari peserta? Tindakan ini tidak dapat dibatalkan.")) {
+            set(participantChatRef, null)
+                .then(() => alert("Semua chat telah dibersihkan."))
+                .catch((err) => console.error("Gagal menghapus chat:", err));
+                }
+            };
 
         const tabs = { tabKontrol: "kontrolSection", tabPeserta: "pesertaSection", tabChat: "chatSection", tabShare: "shareScreenSection", tabMonitor: "monitorSection" };
         Object.keys(tabs).forEach(id => {
