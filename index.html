@@ -290,9 +290,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     
-    // Referensi Database
     const slideRef = ref(db, "slide");
-    const youtubeSyncRef = ref(db, "youtubeSync"); // Ref Youtube
+    const youtubeSyncRef = ref(db, "youtubeSync"); 
     const adminChatRef = ref(db, "chat/adminMessage");
     const participantChatRef = ref(db, "chat/participantMessages");
     const participantsRef = ref(db, "participants");
@@ -330,7 +329,6 @@
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("mainContainer").style.display = "flex";
         
-        // Tracking kehadiran
         const myPresenceRef = ref(db, `participants/${userName.replace(/\s/g, '_')}`);
         setInterval(() => { update(myPresenceRef, { name: userName, lastSeen: Date.now() }); }, 5000);
 
@@ -340,14 +338,12 @@
         initChat();
     }
 
-    // --- SINKRONISASI SLIDE ---
     function initSlides() {
         onValue(slideRef, (snapshot) => {
             const data = snapshot.val();
             if (!data || data.current === lastSlide) return;
             hiddenFrame.src = slideBase + data.current;
             hiddenFrame.onload = () => {
-                // Jangan switch frame jika Youtube sedang aktif
                 onValue(youtubeSyncRef, (ytSnap) => {
                     const ytData = ytSnap.val();
                     if (!ytData || !ytData.active) {
@@ -361,20 +357,23 @@
         });
     }
 
-    // --- SINKRONISASI YOUTUBE (FITUR BARU) ---
+    // --- REVISI: SINKRONISASI YOUTUBE (AUTO-MUTE & NO CONTROLS) ---
     function initYoutube() {
         onValue(youtubeSyncRef, (snapshot) => {
             const data = snapshot.val();
             if (data && data.active) {
-                const embedUrl = `https://www.youtube.com/embed/${data.videoId}?autoplay=1&rel=0`;
+                // Parameter: 
+                // mute=1 (Tanpa suara agar autoplay jalan di Chrome)
+                // controls=0 (Menghilangkan bar navigasi/slider durasi)
+                // rel=0 (Tidak ada rekomendasi video lain)
+                const embedUrl = `https://www.youtube.com/embed/${data.videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1`;
+                
                 if (ytFrame.src !== embedUrl) ytFrame.src = embedUrl;
                 
-                // Munculkan Player YT, Sembunyikan Frame Slide
                 ytFrame.classList.replace('slide-hidden', 'slide-active');
                 activeFrame.classList.replace('slide-active', 'slide-hidden');
                 hiddenFrame.classList.replace('slide-active', 'slide-hidden');
             } else {
-                // Sembunyikan Player YT, Kembali ke Slide
                 ytFrame.classList.replace('slide-active', 'slide-hidden');
                 ytFrame.src = "";
                 activeFrame.classList.replace('slide-hidden', 'slide-active');
@@ -382,7 +381,6 @@
         });
     }
 
-    // --- SINKRONISASI TICKER ---
     function initTicker() {
         const q = query(adminChatRef, limitToLast(1));
         const ticker = document.getElementById("newsTicker");
@@ -414,20 +412,16 @@
         });
     }
 
-    // --- LIVE CHAT ---
     function initChat() {
         const list = document.getElementById("messages-list");
         const input = document.getElementById("chatInput");
         const btn = document.getElementById("sendChatBtn");
-        
         const sendMsg = () => {
             const val = input.value.trim();
             if (val) { push(participantChatRef, { name: userName, message: val, timestamp: Date.now() }); input.value = ""; }
         };
-        
         if (btn) btn.onclick = sendMsg;
         if (input) input.onkeypress = (e) => { if(e.key === 'Enter') sendMsg(); };
-        
         onValue(participantChatRef, (snapshot) => {
             const data = snapshot.val();
             if (!list) return;
@@ -444,7 +438,6 @@
         });
     }
 
-    // --- UI HELPERS ---
     const sidebar = document.getElementById("sidebar");
     document.getElementById("sidebarToggle").onclick = () => sidebar.classList.toggle("mini");
     document.getElementById("logoutBtn").onclick = () => { if (confirm("Keluar acara?")) { localStorage.removeItem('slydeGoUser'); window.location.reload(); } };
