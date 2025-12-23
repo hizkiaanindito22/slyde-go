@@ -84,7 +84,6 @@
     
     #sidebar.mini { width: var(--sidebar-mini-width); }
 
-    /* Header Styling */
     .sidebar-header {
         position: relative;
         padding: 30px 25px; 
@@ -97,71 +96,35 @@
         transition: padding 0.4s ease;
     }
     
-    /* Logo / Brand Text */
-    .brand-text { 
-        transition: opacity 0.3s ease, transform 0.4s ease; 
-        display: inline-block;
-        margin-right: 15px; /* Spasi antara logo dan tombol toggle */
-    }
-    
-    #sidebar.mini .brand-text { 
-        opacity: 0; 
-        transform: translateX(-30px);
-        pointer-events: none; 
-        width: 0;
-        margin-right: 0;
-    }
+    .brand-text { transition: opacity 0.3s ease, transform 0.4s ease; display: inline-block; margin-right: 15px; }
+    #sidebar.mini .brand-text { opacity: 0; transform: translateX(-30px); pointer-events: none; width: 0; margin-right: 0; }
 
-    /* Toggle Button */
     #sidebarToggle {
-        width: 34px;
-        height: 34px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer; 
-        font-size: 0.9rem; 
-        color: var(--text-secondary);
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 8px;
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        flex-shrink: 0;
+        width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-size: 0.9rem; color: var(--text-secondary);
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); flex-shrink: 0;
     }
     #sidebarToggle:hover { background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); border-color: var(--accent-gold); }
-    
-    /* Keadaan saat Mini: Geser tombol ke tengah header */
-    #sidebar.mini .sidebar-header {
-        justify-content: center;
-        padding: 30px 0;
-    }
-
-    #sidebar.mini #sidebarToggle { 
-        transform: rotate(180deg); 
-    }
+    #sidebar.mini .sidebar-header { justify-content: center; padding: 30px 0; }
+    #sidebar.mini #sidebarToggle { transform: rotate(180deg); }
 
     .sidebar-content { flex: 1; overflow-y: auto; overflow-x: hidden; padding-top: 10px; }
 
     .nav-item {
       padding: 16px 25px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center;
-      transition: all 0.2s ease; border-left: 4px solid transparent; text-decoration: none;
-      white-space: nowrap;
+      transition: all 0.2s ease; border-left: 4px solid transparent; text-decoration: none; white-space: nowrap;
     }
-    .nav-item:hover, .nav-item.active { 
-        background: rgba(212, 175, 55, 0.05); color: var(--accent-gold); border-left-color: var(--accent-gold);
-    }
+    .nav-item:hover, .nav-item.active { background: rgba(212, 175, 55, 0.05); color: var(--accent-gold); border-left-color: var(--accent-gold); }
     .nav-item .icon { font-size: 1.2rem; min-width: 30px; display: flex; justify-content: center; }
     .nav-item .label { font-size: 0.95rem; font-weight: 500; margin-left: 12px; transition: opacity 0.3s, transform 0.3s; }
-    
     #sidebar.mini .label { opacity: 0; pointer-events: none; width: 0; transform: translateX(10px); }
 
     #logoutBtn { border-top: 1px solid var(--border); padding: 20px 25px; color: #f87171; cursor: pointer; display: flex; align-items: center; white-space: nowrap; }
     #sidebar.mini #logoutBtn .label { opacity: 0; }
-
     .sidebar-footer { padding: 20px; text-align: center; font-size: 0.8rem; color: #6b7280; border-top: 1px solid var(--border); white-space: nowrap; transition: opacity 0.3s; }
     #sidebar.mini .sidebar-footer { opacity: 0; pointer-events: none; height: 0; padding: 0; overflow: hidden; }
 
-    /* --- MOBILE NAV --- */
     #mobileMenuBtn {
         position: fixed; top: 15px; left: 15px; z-index: 150;
         width: 45px; height: 45px; border-radius: 12px;
@@ -170,7 +133,6 @@
         align-items: center; justify-content: center; cursor: pointer;
     }
 
-    /* --- CONTENT AREA --- */
     #contentArea { flex: 1; height: 100%; position: relative; overflow: hidden; background: #000; }
     .content-page { position: absolute; inset: 0; visibility: hidden; opacity: 0; transition: opacity 0.4s; z-index: 1; }
     .content-page.active { visibility: visible; opacity: 1; z-index: 5; }
@@ -192,13 +154,9 @@
     .news-ticker.hide-anim { transform: scaleX(0); opacity: 0; }
     .ticker-label { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent-gold); color: #000; font-weight: 800; font-size: 0.75rem; padding: 0 15px; display: flex; align-items: center; z-index: 5; }
     .ticker-text-wrapper { padding-left: 0; width: 100%; overflow: hidden; position: relative; }
-    .ticker-text { 
-        display: inline-block; white-space: nowrap; font-size: 1rem; font-weight: 600; line-height: 40px; 
-        padding-left: 100%; animation: marquee 10s linear infinite; 
-    }
+    .ticker-text { display: inline-block; white-space: nowrap; font-size: 1rem; font-weight: 600; line-height: 40px; padding-left: 100%; animation: marquee 10s linear infinite; }
     @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-200%); } }
 
-    /* --- UI CONTROLS --- */
     #fullScreenToggle {
         position: fixed; top: 15px; right: 15px; z-index: 150;
         width: 40px; height: 40px; border-radius: 50%;
@@ -227,13 +185,11 @@
 </head>
 <body>
 
-  <!-- WELCOME ASSETS -->
   <div id="welcomeBgContainer">
     <div class="bg-slideshow"><div></div><div></div></div>
     <div class="bg-overlay"></div>
   </div>
 
-  <!-- WELCOME SCREEN -->
   <div id="loginScreen">
     <div id="loginContentWrapper">
         <div class="login-title">Selamat Datang</div>
@@ -249,7 +205,6 @@
     </div>
   </div>
 
-  <!-- LOADING OVERLAY -->
   <div id="loadingOverlay">
       <div class="santa-container">
           <div class="santa-character" id="santaMover">🎅</div>
@@ -258,7 +213,6 @@
       <div class="loader-text" style="color: #94a3b8; font-size: 0.8rem; letter-spacing: 2px;">MENYIAPKAN PENGALAMAN...</div>
   </div>
 
-  <!-- APP CONTENT -->
   <div id="mainContainer">
     <button id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
     <button id="fullScreenToggle"><i class="fas fa-expand"></i></button>
@@ -266,37 +220,16 @@
     <div id="sidebar">
         <div class="sidebar-header">
             <span class="brand-text">Slyde.Go</span>
-            <div id="sidebarToggle" title="Toggle Sidebar">
-                <i class="fas fa-chevron-left"></i>
-            </div>
+            <div id="sidebarToggle" title="Toggle Sidebar"><i class="fas fa-chevron-left"></i></div>
         </div>
         <div class="sidebar-content">
-            <div class="nav-item active" data-page="page-slides">
-                <span class="icon"><i class="fas fa-tv"></i></span>
-                <span class="label">Presentasi</span>
-            </div>
-            <div class="nav-item" data-page="page-chat">
-                <span class="icon"><i class="fas fa-comments"></i></span>
-                <span class="label">Live Chat</span>
-            </div>
-            <div class="nav-item" data-page="page-gallery">
-                <span class="icon"><i class="fas fa-images"></i></span>
-                <span class="label">Galeri Foto</span>
-            </div>
-            <div class="nav-item" data-page="page-about">
-                <span class="icon"><i class="fas fa-info-circle"></i></span>
-                <span class="label">Tentang</span>
-            </div>
+            <div class="nav-item active" data-page="page-slides"><span class="icon"><i class="fas fa-tv"></i></span><span class="label">Presentasi</span></div>
+            <div class="nav-item" data-page="page-chat"><span class="icon"><i class="fas fa-comments"></i></span><span class="label">Live Chat</span></div>
+            <div class="nav-item" data-page="page-gallery"><span class="icon"><i class="fas fa-images"></i></span><span class="label">Galeri Foto</span></div>
+            <div class="nav-item" data-page="page-about"><span class="icon"><i class="fas fa-info-circle"></i></span><span class="label">Tentang</span></div>
         </div>
-
-        <div class="nav-item" id="logoutBtn">
-            <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
-            <span class="label">Keluar Acara</span>
-        </div>
-        
-        <div class="sidebar-footer">
-            Slyde.Go <b>v2.5</b><br>by hizyourbae
-        </div>
+        <div class="nav-item" id="logoutBtn"><span class="icon"><i class="fas fa-sign-out-alt"></i></span><span class="label">Keluar Acara</span></div>
+        <div class="sidebar-footer">Slyde.Go <b>v2.5</b><br>by hizyourbae</div>
     </div>
     
     <div id="contentArea">
@@ -304,6 +237,7 @@
             <div class="slides-wrapper">
                 <iframe id="frameA" class="slide-frame slide-active" allowfullscreen></iframe>
                 <iframe id="frameB" class="slide-frame slide-hidden" allowfullscreen></iframe>
+                <iframe id="youtubePlayer" class="slide-frame slide-hidden" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
             <div id="newsTicker" class="news-ticker">
                 <div class="ticker-label">ANNOUNCEMENT</div>
@@ -328,9 +262,9 @@
         <div id="page-about" class="content-page">
             <div style="height:100%; overflow-y:auto; padding:80px 40px; text-align:center;">
                 <h1 style="font-family:var(--font-serif); font-size:2.5rem; color:var(--accent-gold);">Slyde.Go</h1>
-                <p style="color:#94a3b8; max-width:500px; margin:20px auto;">Sistem presentasi interaktif berbasis Cloud untuk pengalaman event yang lebih modern dan tersinkronisasi.</p>
+                <p style="color:#94a3b8; max-width:500px; margin:20px auto;">Sistem presentasi interaktif berbasis Cloud.</p>
                 <div style="margin-top:50px; background:#111827; padding:30px; border-radius:20px; display:inline-block;">
-                    <img src="https://hizyourbae.github.io/img/profile.jpg" onerror="this.src='https://ui-avatars.com/api/?name=Hizkia&background=D4AF37&color=000'" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--accent-gold);">
+                    <img src="https://ui-avatars.com/api/?name=Hizkia&background=D4AF37&color=000" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--accent-gold);">
                     <h3 style="margin-top:15px;">Hizkia Anindito</h3>
                     <p style="color:var(--accent-gold); font-size:0.8rem;">Developer & Designer</p>
                 </div>
@@ -341,7 +275,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import { getDatabase, ref, onValue, set, push, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+    import { getDatabase, ref, onValue, set, push, query, limitToLast, update } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB0sPJBi9ITypeztIhtfXwTT5bSc5LbVI8",
@@ -355,19 +289,24 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    
+    // Referensi Database
     const slideRef = ref(db, "slide");
+    const youtubeSyncRef = ref(db, "youtubeSync"); // Ref Youtube
     const adminChatRef = ref(db, "chat/adminMessage");
     const participantChatRef = ref(db, "chat/participantMessages");
+    const participantsRef = ref(db, "participants");
 
-    const baseUrl = "https://docs.google.com/presentation/d/e/2PACX-1vRW29GKiX5OJ6paiSw2lD654cT2qPhSb-VFCfK9K-PAHwNvDDKP-2J2XHahTwr3_aXkjpR1Fa-4M4-h/pubembed?rm=minimal&start=false&loop=false&delayms=0&slide=";
+    const slideBase = "https://docs.google.com/presentation/d/e/2PACX-1vRW29GKiX5OJ6paiSw2lD654cT2qPhSb-VFCfK9K-PAHwNvDDKP-2J2XHahTwr3_aXkjpR1Fa-4M4-h/pubembed?rm=minimal&start=false&loop=false&delayms=0&slide=";
     
     let activeFrame = document.getElementById("frameA");
     let hiddenFrame = document.getElementById("frameB");
+    const ytFrame = document.getElementById("youtubePlayer");
     let lastSlide = 0;
     let userName = localStorage.getItem('slydeGoUser') || "";
 
     window.onload = () => {
-        startCountdown(new Date(2025, 11, 28, 10, 0, 0).getTime());
+        startCountdown("2025-12-28 10:00:00");
         if (userName) enterApp();
     };
 
@@ -380,10 +319,8 @@
         const loading = document.getElementById("loadingOverlay");
         loading.style.display = "flex";
         setTimeout(() => { 
-            const character = document.getElementById("santaMover");
-            const progress = document.getElementById("santaProgress");
-            if(character) character.style.left = "100%"; 
-            if(progress) progress.style.width = "100%"; 
+            document.getElementById("santaMover").style.left = "100%"; 
+            document.getElementById("santaProgress").style.width = "100%"; 
         }, 100);
         setTimeout(() => { loading.style.opacity = "0"; setTimeout(() => { loading.style.display = "none"; enterApp(); }, 500); }, 2800);
     };
@@ -392,32 +329,60 @@
         document.getElementById("welcomeBgContainer").style.display = "none";
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("mainContainer").style.display = "flex";
+        
+        // Tracking kehadiran
+        const myPresenceRef = ref(db, `participants/${userName.replace(/\s/g, '_')}`);
+        setInterval(() => { update(myPresenceRef, { name: userName, lastSeen: Date.now() }); }, 5000);
+
         initSlides();
+        initYoutube();
         initTicker();
         initChat();
     }
 
-    // Sidebar Toggle
-    const sidebar = document.getElementById("sidebar");
-    const sidebarToggle = document.getElementById("sidebarToggle");
-    sidebarToggle.onclick = () => {
-        sidebar.classList.toggle("mini");
-    };
-
+    // --- SINKRONISASI SLIDE ---
     function initSlides() {
         onValue(slideRef, (snapshot) => {
             const data = snapshot.val();
             if (!data || data.current === lastSlide) return;
-            hiddenFrame.src = baseUrl + data.current;
+            hiddenFrame.src = slideBase + data.current;
             hiddenFrame.onload = () => {
-                hiddenFrame.classList.replace('slide-hidden', 'slide-active');
-                activeFrame.classList.replace('slide-active', 'slide-hidden');
-                [activeFrame, hiddenFrame] = [hiddenFrame, activeFrame];
+                // Jangan switch frame jika Youtube sedang aktif
+                onValue(youtubeSyncRef, (ytSnap) => {
+                    const ytData = ytSnap.val();
+                    if (!ytData || !ytData.active) {
+                        hiddenFrame.classList.replace('slide-hidden', 'slide-active');
+                        activeFrame.classList.replace('slide-active', 'slide-hidden');
+                        [activeFrame, hiddenFrame] = [hiddenFrame, activeFrame];
+                    }
+                }, { onlyOnce: true });
                 lastSlide = data.current;
             };
         });
     }
 
+    // --- SINKRONISASI YOUTUBE (FITUR BARU) ---
+    function initYoutube() {
+        onValue(youtubeSyncRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.active) {
+                const embedUrl = `https://www.youtube.com/embed/${data.videoId}?autoplay=1&rel=0`;
+                if (ytFrame.src !== embedUrl) ytFrame.src = embedUrl;
+                
+                // Munculkan Player YT, Sembunyikan Frame Slide
+                ytFrame.classList.replace('slide-hidden', 'slide-active');
+                activeFrame.classList.replace('slide-active', 'slide-hidden');
+                hiddenFrame.classList.replace('slide-active', 'slide-hidden');
+            } else {
+                // Sembunyikan Player YT, Kembali ke Slide
+                ytFrame.classList.replace('slide-active', 'slide-hidden');
+                ytFrame.src = "";
+                activeFrame.classList.replace('slide-hidden', 'slide-active');
+            }
+        });
+    }
+
+    // --- SINKRONISASI TICKER ---
     function initTicker() {
         const q = query(adminChatRef, limitToLast(1));
         const ticker = document.getElementById("newsTicker");
@@ -429,7 +394,7 @@
                 loopCount++;
                 if (loopCount >= 2) {
                     ticker.classList.add("hide-anim");
-                    setTimeout(() => { ticker.style.display = "none"; text.style.animation = 'none'; }, 800);
+                    setTimeout(() => { ticker.style.display = "none"; }, 800);
                 }
             });
         }
@@ -449,6 +414,7 @@
         });
     }
 
+    // --- LIVE CHAT ---
     function initChat() {
         const list = document.getElementById("messages-list");
         const input = document.getElementById("chatInput");
@@ -478,21 +444,11 @@
         });
     }
 
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.onclick = () => {
-            if (confirm("Keluar dari sesi acara?")) { localStorage.removeItem('slydeGoUser'); window.location.reload(); }
-        };
-    }
-
-    const menuBtn = document.getElementById("mobileMenuBtn");
-    if (menuBtn) {
-        menuBtn.onclick = (e) => {
-            e.stopPropagation();
-            sidebar.classList.toggle("open");
-            menuBtn.innerHTML = sidebar.classList.contains("open") ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-        };
-    }
+    // --- UI HELPERS ---
+    const sidebar = document.getElementById("sidebar");
+    document.getElementById("sidebarToggle").onclick = () => sidebar.classList.toggle("mini");
+    document.getElementById("logoutBtn").onclick = () => { if (confirm("Keluar acara?")) { localStorage.removeItem('slydeGoUser'); window.location.reload(); } };
+    document.getElementById("mobileMenuBtn").onclick = (e) => { e.stopPropagation(); sidebar.classList.toggle("open"); };
 
     document.querySelectorAll(".nav-item[data-page]").forEach(item => {
         item.onclick = function() {
@@ -504,53 +460,29 @@
         }
     });
 
-    const fsBtn = document.getElementById("fullScreenToggle");
-    if (fsBtn) {
-        fsBtn.onclick = () => {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
-        };
-    }
+    document.getElementById("fullScreenToggle").onclick = () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+    };
 
-    // FUNGSI COUNTDOWN BARU (Menerima string tanggal)
     function startCountdown(targetDateString) {
         const timerEl = document.getElementById("lockdownCountdownTimer");
-        if (!timerEl) return;
-
-        // Mengonversi string tanggal menjadi timestamp
         const targetTime = new Date(targetDateString).getTime();
-
         const update = () => {
-            const now = Date.now();
-            const dist = targetTime - now;
-
-            if (dist < 0) {
-                timerEl.innerHTML = "<b style='color:var(--accent-gold); letter-spacing:2px;'>EVENT TELAH DIMULAI</b>";
-                return;
-            }
-
+            const dist = targetTime - Date.now();
+            if (dist < 0) { timerEl.innerHTML = "<b style='color:var(--accent-gold);'>EVENT TELAH DIMULAI</b>"; return; }
             const d = Math.floor(dist / (1000 * 60 * 60 * 24));
             const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((dist % (1000 * 60)) / 1000);
-
             timerEl.innerHTML = `
                 <div class="time-card"><span class="time-number">${d}</span><span class="time-label">Hari</span></div>
                 <div class="time-card"><span class="time-number">${String(h).padStart(2, '0')}</span><span class="time-label">Jam</span></div>
                 <div class="time-card"><span class="time-number">${String(m).padStart(2, '0')}</span><span class="time-label">Menit</span></div>
-                <div class="time-card"><span class="time-number">${String(s).padStart(2, '0')}</span><span class="time-label">Detik</span></div>
-            `;
+                <div class="time-card"><span class="time-number">${String(s).padStart(2, '0')}</span><span class="time-label">Detik</span></div>`;
         };
-
-        update();
-        setInterval(update, 1000);
+        update(); setInterval(update, 1000);
     }
-
-    // Inisialisasi Countdown dengan Format Tanggal
-    // Contoh: "2025-12-26" atau "2025-12-26 10:00:00"
-    window.onload = () => {
-        startCountdown("2025-12-28 10:00:00");
-    };
   </script>
 </body>
 </html>

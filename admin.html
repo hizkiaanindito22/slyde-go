@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slide-sync ADMIN</title>
+    <title>Slide-sync ADMIN (Live Preview)</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap"
         rel="stylesheet">
@@ -29,9 +29,7 @@
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -57,423 +55,361 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        h1 {
-            font-family: 'Playfair Display', serif;
-            color: var(--primary-color);
-            text-align: center;
-        }
+        h1 { font-family: 'Playfair Display', serif; color: var(--primary-color); text-align: center; margin-bottom: 30px; }
 
-        h2 {
-            color: var(--primary-color);
-            border-bottom: 1px solid var(--secondary-text);
-            padding-bottom: 10px;
-        }
-
-        #slideFrame {
+        .display-container {
+            position: relative;
             width: 100%;
             height: 500px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
             background: #000;
+            border-radius: 12px;
+            overflow: hidden;
             margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
 
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            margin-bottom: 15px;
+        #slideFrame, #youtubeFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
-        .control-row {
+        .mode-selector {
             display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px;
+            border-radius: 10px;
         }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            background: transparent;
+            color: var(--secondary-text);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: var(--primary-color);
+            color: #1e293b;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 15px; }
+        .control-row { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
 
         button {
             background-color: var(--primary-color);
             color: #1e293b;
             border: none;
             border-radius: 8px;
-            padding: 15px 10px;
+            padding: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        button:hover {
-            transform: translateY(-3px);
-            opacity: 0.9;
-        }
+        button:hover { transform: translateY(-2px); opacity: 0.9; }
+        .nav-btn { background-color: #334155; color: #fff; }
+        .danger { background-color: var(--danger-color); color: white; }
+        .success { background-color: var(--success-color); color: white; }
 
-        .nav-btn {
-            background-color: #334155;
-            color: #fff;
-        }
-
-        .danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
-
-        .success {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        select {
-            padding: 15px;
+        select, input, textarea {
+            padding: 12px;
             border-radius: 8px;
-            background: #334155;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-family: inherit;
-            cursor: pointer;
-            flex-grow: 1;
-        }
-
-        .tab {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--secondary-text);
-        }
-
-        .tab button {
-            background: transparent;
-            color: var(--secondary-text);
-            border-radius: 0;
-            border-bottom: 3px solid transparent;
-            box-shadow: none;
-        }
-
-        .tab button.active {
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--primary-color);
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        li {
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            margin-bottom: 5px;
-            border-radius: 5px;
-        }
-
-        textarea,
-        input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--secondary-text);
             background: rgba(255, 255, 255, 0.05);
-            color: var(--text-color);
-            margin-bottom: 10px;
+            color: white;
+            border: 1px solid var(--secondary-text);
+            width: 100%;
         }
 
-        /* MONITORING STYLES */
-        .monitor-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
+        .tab { display: flex; justify-content: center; margin-bottom: 30px; border-bottom: 2px solid var(--secondary-text); }
+        .tab button { background: transparent; color: var(--secondary-text); border-radius: 0; border-bottom: 3px solid transparent; }
+        .tab button.active { color: var(--primary-color); border-bottom: 3px solid var(--primary-color); }
 
-        .monitor-card {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        ul { list-style: none; padding: 0; max-height: 250px; overflow-y: auto; }
+        li { padding: 10px; background: rgba(0, 0, 0, 0.2); margin-bottom: 5px; border-radius: 6px; font-size: 0.9rem; }
 
-        .monitor-value {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin: 10px 0;
-        }
+        .monitor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .monitor-card { background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); }
 
-        .monitor-label {
-            font-size: 0.9em;
-            color: var(--secondary-text);
-            text-transform: uppercase;
-        }
-
-        .status-dot {
-            height: 15px;
-            width: 15px;
-            background-color: #bbb;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-        }
-
-        .status-online {
-            background-color: var(--success-color);
-            box-shadow: 0 0 10px var(--success-color);
-        }
-
-        .status-offline {
-            background-color: var(--danger-color);
-        }
-
-        #loginScreen {
-            text-align: center;
-        }
-
-        #loginBox {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 16px;
-            width: 350px;
-            margin: auto;
-            box-shadow: var(--shadow);
-        }
+        .status-dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; background: #666; }
+        .status-online { background-color: var(--success-color); box-shadow: 0 0 8px var(--success-color); }
+        
+        #loginScreen { text-align: center; }
+        #loginBox { background: var(--card-bg); padding: 40px; border-radius: 16px; width: 350px; margin: auto; box-shadow: var(--shadow); }
 
         @media (max-width: 800px) {
-            .controls {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            #slideFrame {
-                height: 300px;
-            }
-
-            .monitor-grid {
-                grid-template-columns: 1fr;
-            }
+            .controls { grid-template-columns: repeat(2, 1fr); }
+            .display-container { height: 250px; }
         }
     </style>
 </head>
 
 <body>
-    <button id="themeToggle" style="position:absolute; top:20px; right:20px; width:auto;">☀️ Mode</button>
+    <button id="themeToggle" style="position:absolute; top:20px; right:20px; width:auto; padding: 8px 15px;">☀️ Mode</button>
 
     <div id="loginScreen">
         <div id="loginBox">
             <h2>🔐 Login Admin</h2>
-            <input type="password" id="adminPass" placeholder="Password:..." />
-            <button id="loginBtn">Masuk</button>
-            <p id="loginError" style="color:red; display:none;">Password salah!</p>
+            <input type="password" id="adminPass" placeholder="Password:..." style="margin-bottom:15px;"/>
+            <button id="loginBtn" style="width:100%">Masuk</button>
+            <p id="loginError" style="color:red; display:none; margin-top:10px;">Password salah!</p>
         </div>
     </div>
 
     <div class="card" id="adminPanel" style="display:none;">
         <h1>Slide-sync ADMIN</h1>
+        
         <div class="tab">
-            <button id="tabKontrol" class="active">🎛️ Slide</button>
+            <button id="tabKontrol" class="active">🎛️ Kontrol Utama</button>
             <button id="tabPeserta">👥 Peserta</button>
             <button id="tabChat">💬 Chat</button>
-            <button id="tabYoutube">📺 YouTube</button>
             <button id="tabMonitor">📊 Monitor</button>
         </div>
 
         <div id="kontrolSection">
-            <iframe id="slideFrame" src=""></iframe>
-            <div class="control-row">
-                <label for="transisiSelect">🎬 Efek Transisi:</label>
-                <select id="transisiSelect">
-                    <option value="fade">✨ Fade (Standar)</option>
-                    <option value="blur">🌫️ Blur</option>
-                    <option value="flip">🔄 Flip 3D</option>
-                    <option value="circle">🔵 Circle Open</option>
-                    <option value="book">📖 Book Page</option>
-                </select>
+            <div class="mode-selector">
+                <button id="modeSlideBtn" class="mode-btn active">📄 Google Slide</button>
+                <button id="modeYoutubeBtn" class="mode-btn">🎬 YouTube Stream</button>
             </div>
-            <div class="controls">
-                <button id="prevBtn" class="nav-btn">⬅️ PREV</button>
-                <button id="nextBtn" class="nav-btn">NEXT ➡️</button>
-                <button id="homeBtn">🏠 HOME</button>
-                <button id="restoreBtn" class="success">🔁 RESTORE</button>
-                <button id="blankBtn" class="danger">⬜ BLANK</button>
+
+            <div class="display-container">
+                <iframe id="slideFrame" src=""></iframe>
+                <iframe id="youtubeFrame" src="" style="display:none;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
             </div>
-            <p style="text-align:center">Slide Aktif: <b id="statusSlide">1</b></p>
+
+            <div id="slideControlsGroup">
+                <div class="control-row">
+                    <label style="white-space:nowrap">🎬 Transisi:</label>
+                    <select id="transisiSelect">
+                        <option value="fade">✨ Fade</option>
+                        <option value="blur">🌫️ Blur</option>
+                        <option value="flip">🔄 Flip</option>
+                        <option value="circle">🔵 Circle</option>
+                        <option value="book">📖 Book</option>
+                    </select>
+                </div>
+                <div class="controls">
+                    <button id="prevBtn" class="nav-btn">⬅️ PREV</button>
+                    <button id="nextBtn" class="nav-btn">NEXT ➡️</button>
+                    <button id="homeBtn">🏠 HOME</button>
+                    <button id="restoreBtn" class="success">🔁 RESTORE</button>
+                    <button id="blankBtn" class="danger">⬜ BLANK</button>
+                </div>
+                <p style="text-align:center; font-size: 0.9rem;">Slide Aktif: <b id="statusSlide" style="color:var(--primary-color)">1</b></p>
+            </div>
+
+            <div id="youtubeControlsGroup" style="display:none;">
+                <input type="text" id="ytUrlInput" placeholder="Paste link YouTube di sini (Contoh: https://www.youtube.com/watch?v=...) " style="margin-bottom:15px;" />
+                <div style="display:flex; gap:10px;">
+                    <button id="btnPlayYT" class="success" style="flex:2;">🚀 Publish ke Peserta & Play</button>
+                    <button id="btnStopYT" class="danger" style="flex:1;">🛑 Stop YouTube</button>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--secondary-text); margin-top: 10px; text-align: center;">
+                    ℹ️ Video yang tampil di atas adalah apa yang dilihat oleh peserta saat ini.
+                </p>
+            </div>
         </div>
 
         <div id="pesertaSection" style="display:none;">
-            <h2>👥 Peserta Online</h2>
+            <h2>👥 Peserta Online (<span id="activeUsersVal">0</span>)</h2>
             <ul id="participantsList"></ul>
         </div>
 
-        <div id="chatSection" style="display:none; display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+        <div id="chatSection" style="display:none; grid-template-columns: 1fr 1fr; gap:20px;">
             <div>
-                <h2>📢 Running Text</h2><textarea id="adminMessageInput" placeholder="Pesan info..."></textarea><button
-                    id="sendAdminMessageBtn" style="width:100%;">Kirim</button>
+                <h2>📢 Running Text</h2>
+                <textarea id="adminMessageInput" placeholder="Ketik pesan pengumuman..." style="height:100px; margin-bottom:10px;"></textarea>
+                <button id="sendAdminMessageBtn" style="width:100%;">Kirim ke Semua Layar</button>
             </div>
             <div>
                 <h2>💬 Pesan Masuk</h2>
                 <ul id="participantChatList"></ul>
+                <button class="danger" id="clearChatBtn" style="width:100%; margin-top:10px; padding: 8px;">Hapus Riwayat Chat</button>
             </div>
-            <button class="btn-danger" id="clearChatBtn"
-                style="padding: 5px 12px; font-size: 0.8rem; margin: 0;">Bersihkan Chat</button>
         </div>
 
-        <div id="shareScreenSection" style="display:none;">
-            <h2>🖥️ Share Screen</h2><input type="url" id="shareScreenLink" placeholder="Link..." />
-            <div style="display:flex; gap:10px;"><button id="enableShareBtn" class="success" style="flex:1;">✅
-                    Aktifkan</button><button id="disableShareBtn" class="danger" style="flex:1;">❌ Matikan</button>
-            </div>
-            <p id="shareStatus" style="margin-top:10px;">Status: Nonaktif</p>
-        </div>
-
-        <!-- MONITORING SECTION -->
         <div id="monitorSection" style="display:none;">
-            <h2>📊 Monitoring Server & Sistem</h2>
+            <h2>📊 Monitoring Sistem</h2>
             <div class="monitor-grid">
-                <div class="monitor-card">
-                    <span id="serverStatusDot" class="status-dot"></span>
-                    <span id="serverStatusText">Connecting...</span>
-                    <div class="monitor-label">Status Server (Firebase)</div>
-                </div>
-                <div class="monitor-card">
-                    <div id="latencyVal" class="monitor-value">0 ms</div>
-                    <div class="monitor-label">Latency / Ping</div>
-                </div>
-                <div class="monitor-card">
-                    <div id="activeUsersVal" class="monitor-value">0</div>
-                    <div class="monitor-label">Total Peserta Aktif</div>
-                </div>
-                <div class="monitor-card">
-                    <div id="memoryVal" class="monitor-value">-</div>
-                    <div class="monitor-label">Penggunaan Memori (Admin)</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="youtubeSection" style="display:none;">
-            <h2>📺 Sinkronisasi Video YouTube</h2>
-            <div class="monitor-card" style="text-align: left; background: rgba(255,255,255,0.05);">
-                <label>Link Video YouTube:</label>
-                <input type="text" id="ytUrlInput" placeholder="Contoh: https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
-
-                <div style="display:flex; gap:10px; margin-top:10px;">
-                    <button id="btnPlayYT" class="success" style="flex:2;">🚀 Putar di Layar Peserta</button>
-                    <button id="btnStopYT" class="danger" style="flex:1;">🛑 Matikan</button>
-                </div>
-
-                <p style="font-size: 0.85rem; color: var(--secondary-text); margin-top: 15px;">
-                    *Tips: Pastikan video bersifat publik/unlisted. Peserta akan melihat video secara otomatis.*
-                </p>
+                <div class="monitor-card"><span id="serverStatusDot" class="status-dot"></span><span id="serverStatusText">Connecting...</span><div style="font-size:0.8rem; color:var(--secondary-text)">Server Firebase</div></div>
+                <div class="monitor-card"><div id="latencyVal" style="font-size:1.5em; color:var(--primary-color)">0 ms</div><div style="font-size:0.8rem; color:var(--secondary-text)">Ping Latency</div></div>
+                <div class="monitor-card"><div id="memoryVal" style="font-size:1.1em; color:var(--primary-color)">-</div><div style="font-size:0.8rem; color:var(--secondary-text)">RAM Usage (Admin)</div></div>
             </div>
         </div>
     </div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, update } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
+        const firebaseConfig = {
+            apiKey: "AIzaSyB0sPJBi9ITypeztIhtfXwTT5bSc5LbVI8",
+            authDomain: "testslide1.firebaseapp.com",
+            databaseURL: "https://testslide1-default-rtdb.firebaseio.com",
+            projectId: "testslide1",
+            storageBucket: "testslide1.firebasestorage.app",
+            messagingSenderId: "405700914757",
+            appId: "1:405700914757:web:250c2b1e8ca958ca68bd2c"
+        };
 
-        <script type="module">
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-            import { getDatabase, ref, set, onValue, get, push, update } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        const slideRef = ref(db, "slide");
+        const participantsRef = ref(db, "participants");
+        const adminChatRef = ref(db, "chat/adminMessage");
+        const participantChatRef = ref(db, "chat/participantMessages");
+        const youtubeSyncRef = ref(db, "youtubeSync");
+        const connectedRef = ref(db, ".info/connected");
 
-            const firebaseConfig = {
-                apiKey: "AIzaSyB0sPJBi9ITypeztIhtfXwTT5bSc5LbVI8",
-                authDomain: "testslide1.firebaseapp.com",
-                databaseURL: "https://testslide1-default-rtdb.firebaseio.com",
-                projectId: "testslide1",
-                storageBucket: "testslide1.firebasestorage.app",
-                messagingSenderId: "405700914757",
-                appId: "1:405700914757:web:250c2b1e8ca958ca68bd2c"
-            };
+        let currentSlide = 1;
+        let lastNormalSlide = 1;
+        const slideBase = "https://docs.google.com/presentation/d/e/2PACX-1vRW29GKiX5OJ6paiSw2lD654cT2qPhSb-VFCfK9K-PAHwNvDDKP-2J2XHahTwr3_aXkjpR1Fa-4M4-h/pubembed?rm=minimal&start=false&loop=false&delayms=0&slide=";
 
-            const app = initializeApp(firebaseConfig);
-            const db = getDatabase(app);
-            const slideRef = ref(db, "slide");
-            const participantsRef = ref(db, "participants");
-            const adminChatRef = ref(db, "chat/adminMessage");
-            const participantChatRef = ref(db, "chat/participantMessages");
-            const shareScreenRef = ref(db, "shareScreen");
-            const connectedRef = ref(db, ".info/connected");
+        // LOGIN
+        document.getElementById("loginBtn").onclick = () => {
+            if (document.getElementById("adminPass").value === "admin123") {
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("adminPanel").style.display = "block";
+                updateSlide();
+                startMonitoring();
+            } else { document.getElementById("loginError").style.display = "block"; }
+        };
 
-            let currentSlide = 1; let lastNormalSlide = 1;
-            const baseUrl = "https://docs.google.com/presentation/d/e/2PACX-1vRW29GKiX5OJ6paiSw2lD654cT2qPhSb-VFCfK9K-PAHwNvDDKP-2J2XHahTwr3_aXkjpR1Fa-4M4-h/pubembed?rm=minimal&start=false&loop=false&delayms=0&slide=";
-            const iframe = document.getElementById("slideFrame");
-            const transisiSelect = document.getElementById("transisiSelect");
+        // MODE SWITCHER
+        const modeSlideBtn = document.getElementById("modeSlideBtn");
+        const modeYoutubeBtn = document.getElementById("modeYoutubeBtn");
+        const slideCtrl = document.getElementById("slideControlsGroup");
+        const youtubeCtrl = document.getElementById("youtubeControlsGroup");
+        const slideFrame = document.getElementById("slideFrame");
+        const youtubeFrame = document.getElementById("youtubeFrame");
 
-            document.getElementById("loginBtn").onclick = () => { if (document.getElementById("adminPass").value === "admin123") { document.getElementById("loginScreen").style.display = "none"; document.getElementById("adminPanel").style.display = "block"; updateSlide(); startMonitoring(); } else { document.getElementById("loginError").style.display = "block"; } };
+        modeSlideBtn.onclick = () => {
+            modeSlideBtn.classList.add("active");
+            modeYoutubeBtn.classList.remove("active");
+            slideCtrl.style.display = "block";
+            youtubeCtrl.style.display = "none";
+            slideFrame.style.display = "block";
+            youtubeFrame.style.display = "none";
+            youtubeFrame.src = ""; // Reset preview
+            set(youtubeSyncRef, { active: false });
+        };
 
-            function updateSlide() { iframe.src = baseUrl + currentSlide; set(slideRef, { current: currentSlide, transition: transisiSelect.value }); document.getElementById("statusSlide").innerText = currentSlide; }
-            document.getElementById("nextBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide++; updateSlide(); };
-            document.getElementById("prevBtn").onclick = () => { lastNormalSlide = currentSlide; if (currentSlide > 1) currentSlide--; updateSlide(); };
-            document.getElementById("homeBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide = 1; updateSlide(); };
-            document.getElementById("blankBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide = 7; updateSlide(); };
-            document.getElementById("restoreBtn").onclick = () => { currentSlide = lastNormalSlide; updateSlide(); };
-            transisiSelect.onchange = () => updateSlide();
+        modeYoutubeBtn.onclick = () => {
+            modeYoutubeBtn.classList.add("active");
+            modeSlideBtn.classList.remove("active");
+            slideCtrl.style.display = "none";
+            youtubeCtrl.style.display = "block";
+            slideFrame.style.display = "none";
+            youtubeFrame.style.display = "block";
+        };
 
-            document.getElementById("sendAdminMessageBtn").onclick = () => { const msg = document.getElementById("adminMessageInput").value; if (msg) { push(adminChatRef, { message: msg, timestamp: Date.now() }); alert("Running text dikirim!"); document.getElementById("adminMessageInput").value = ""; } };
-            onValue(participantChatRef, (s) => { const list = document.getElementById("participantChatList"); list.innerHTML = ""; const d = s.val(); if (d) { Object.values(d).forEach(m => { const li = document.createElement("li"); li.innerText = `${m.name}: ${m.message}`; list.appendChild(li); }); } });
+        // SLIDE LOGIC
+        function updateSlide() {
+            slideFrame.src = slideBase + currentSlide;
+            set(slideRef, { current: currentSlide, transition: document.getElementById("transisiSelect").value });
+            document.getElementById("statusSlide").innerText = currentSlide;
+        }
 
-            document.getElementById("enableShareBtn").onclick = () => { const url = document.getElementById("shareScreenLink").value; if (url) set(shareScreenRef, { active: true, link: url }); };
-            document.getElementById("disableShareBtn").onclick = () => { const url = document.getElementById("shareScreenLink").value; set(shareScreenRef, { active: false, link: url }); };
-            onValue(shareScreenRef, (s) => { const d = s.val(); document.getElementById("shareStatus").innerText = "Status: " + (d?.active ? "AKTIF" : "NONAKTIF"); });
+        document.getElementById("nextBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide++; updateSlide(); };
+        document.getElementById("prevBtn").onclick = () => { if(currentSlide > 1) { lastNormalSlide = currentSlide; currentSlide--; updateSlide(); } };
+        document.getElementById("homeBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide = 1; updateSlide(); };
+        document.getElementById("blankBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide = 7; updateSlide(); };
+        document.getElementById("restoreBtn").onclick = () => { currentSlide = lastNormalSlide; updateSlide(); };
+        document.getElementById("transisiSelect").onchange = () => updateSlide();
 
-            onValue(participantsRef, (s) => {
-                const list = document.getElementById("participantsList"); list.innerHTML = ""; const d = s.val(); let count = 0;
-                if (d) { Object.values(d).forEach(p => { if (Date.now() - p.lastSeen < 30000) { count++; const li = document.createElement("li"); li.innerHTML = `🟢 <b>${p.name}</b>`; list.appendChild(li); } }); }
-                document.getElementById("activeUsersVal").innerText = count;
-            });
+        // YOUTUBE LOGIC (LIVE PREVIEW)
+        function extractID(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        document.getElementById("btnPlayYT").onclick = () => {
+            const id = extractID(document.getElementById("ytUrlInput").value);
+            if (id) {
+                // Tampilkan di layar Admin sebagai preview
+                youtubeFrame.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1`;
+                // Sinkronkan ke database untuk Peserta
+                set(youtubeSyncRef, { active: true, videoId: id, startTime: Date.now() });
+                alert("Berhasil! Video sedang diputar di layar peserta.");
+            } else { alert("Link YouTube tidak valid!"); }
+        };
+
+        document.getElementById("btnStopYT").onclick = () => {
+            youtubeFrame.src = "";
+            set(youtubeSyncRef, { active: false });
+            alert("Streaming YouTube dihentikan.");
+        };
+
+        // RUNNING TEXT
+        document.getElementById("sendAdminMessageBtn").onclick = () => {
+            const msg = document.getElementById("adminMessageInput").value;
+            if (msg) { push(adminChatRef, { message: msg, timestamp: Date.now() }); document.getElementById("adminMessageInput").value = ""; alert("Pesan terkirim!"); }
+        };
+
+        onValue(participantChatRef, (s) => {
+            const list = document.getElementById("participantChatList");
+            list.innerHTML = "";
+            const d = s.val();
+            if (d) { Object.entries(d).reverse().forEach(([key, m]) => { const li = document.createElement("li"); li.innerText = `${m.name}: ${m.message}`; list.appendChild(li); }); }
+        });
+
+        document.getElementById("clearChatBtn").onclick = () => { if(confirm("Hapus semua chat?")) set(participantChatRef, null); };
+
+        // MONITORING
+        onValue(participantsRef, (s) => {
+            let count = 0; const d = s.val();
+            if (d) { Object.values(d).forEach(p => { if (Date.now() - p.lastSeen < 30000) count++; }); }
+            document.getElementById("activeUsersVal").innerText = count;
             
+            // List Update
+            const list = document.getElementById("participantsList"); list.innerHTML = "";
+            if (d) { Object.values(d).forEach(p => { if (Date.now() - p.lastSeen < 30000) { const li = document.createElement("li"); li.innerHTML = `🟢 <b>${p.name}</b>`; list.appendChild(li); } }); }
+        });
 
-            // --- MONITORING LOGIC ---
-            function startMonitoring() {
-                // 1. Connection Status
-                onValue(connectedRef, (snap) => {
-                    const connected = snap.val();
-                    const dot = document.getElementById("serverStatusDot");
-                    const txt = document.getElementById("serverStatusText");
-                    if (connected) { dot.classList.add("status-online"); dot.classList.remove("status-offline"); txt.innerText = "ONLINE (Terhubung)"; }
-                    else { dot.classList.remove("status-online"); dot.classList.add("status-offline"); txt.innerText = "OFFLINE (Terputus)"; }
-                });
-
-                // 2. Latency Check (Ping)
-                setInterval(() => {
-                    const start = Date.now();
-                    // Tulis dummy timestamp ke path khusus ping
-                    set(ref(db, "ping"), start).then(() => {
-                        const latency = Date.now() - start;
-                        const latEl = document.getElementById("latencyVal");
-                        latEl.innerText = latency + " ms";
-                        latEl.style.color = latency < 100 ? "var(--success-color)" : (latency < 300 ? "#fdbb2d" : "var(--danger-color)");
-                    });
-                }, 2000);
-
-                // 3. Memory (Chrome only)
-                setInterval(() => {
-                    if (performance && performance.memory) {
-                        const used = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
-                        const total = Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024);
-                        document.getElementById("memoryVal").innerText = `${used} MB / ${total} MB`;
-                    } else {
-                        document.getElementById("memoryVal").innerText = "Tidak Didukung Browser";
-                    }
-                }, 3000);
-            }
-
-            // -- CLEAR ALL CHAT --
-            document.getElementById("clearChatBtn").onclick = () => {
-                if (confirm("Apakah Anda yakin ingin MENGHAPUS SEMUA CHAT dari peserta? Tindakan ini tidak dapat dibatalkan.")) {
-                    set(participantChatRef, null)
-                        .then(() => alert("Semua chat telah dibersihkan."))
-                        .catch((err) => console.error("Gagal menghapus chat:", err));
-                }
-            };
-
-            const tabs = { tabKontrol: "kontrolSection", tabPeserta: "pesertaSection", tabChat: "chatSection", tabShare: "shareScreenSection", tabMonitor: "monitorSection" };
-            Object.keys(tabs).forEach(id => {
-                document.getElementById(id).onclick = function () {
-                    document.querySelectorAll(".tab button").forEach(b => b.classList.remove("active")); this.classList.add("active");
-                    Object.values(tabs).forEach(sec => document.getElementById(sec).style.display = "none");
-                    document.getElementById(tabs[id]).style.display = (id === 'chatSection' || id === 'monitorSection') ? 'grid' : 'block';
-                    if (id === 'monitorSection') document.querySelector('#monitorSection .monitor-grid').style.display = 'grid'; // Fix grid display reset
-                }
+        function startMonitoring() {
+            onValue(connectedRef, (snap) => {
+                const dot = document.getElementById("serverStatusDot");
+                dot.className = snap.val() ? "status-dot status-online" : "status-dot";
+                document.getElementById("serverStatusText").innerText = snap.val() ? "Terhubung" : "Terputus";
             });
-            document.getElementById("themeToggle").onclick = () => { const html = document.documentElement; html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); };
-        </script>
-</body>
+            setInterval(() => {
+                const start = Date.now();
+                set(ref(db, "ping"), start).then(() => { document.getElementById("latencyVal").innerText = (Date.now() - start) + " ms"; });
+                if (window.performance && performance.memory) {
+                    document.getElementById("memoryVal").innerText = Math.round(performance.memory.usedJSHeapSize / 1048576) + " MB";
+                }
+            }, 3000);
+        }
 
+        // TAB NAVIGATION
+        const tabs = { tabKontrol: "kontrolSection", tabPeserta: "pesertaSection", tabChat: "chatSection", tabMonitor: "monitorSection" };
+        Object.keys(tabs).forEach(id => {
+            document.getElementById(id).onclick = function () {
+                document.querySelectorAll(".tab button").forEach(b => b.classList.remove("active")); this.classList.add("active");
+                Object.values(tabs).forEach(sec => document.getElementById(sec).style.display = "none");
+                const target = document.getElementById(tabs[id]);
+                target.style.display = (id === 'tabChat') ? 'grid' : 'block';
+            }
+        });
+
+        document.getElementById("themeToggle").onclick = () => {
+            const html = document.documentElement;
+            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        };
+    </script>
+</body>
 </html>
