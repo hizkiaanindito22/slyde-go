@@ -84,7 +84,6 @@
     
     #sidebar.mini { width: var(--sidebar-mini-width); }
 
-    /* Header Styling */
     .sidebar-header {
         position: relative;
         padding: 30px 25px; 
@@ -97,11 +96,10 @@
         transition: padding 0.4s ease;
     }
     
-    /* Logo / Brand Text */
     .brand-text { 
         transition: opacity 0.3s ease, transform 0.4s ease; 
         display: inline-block;
-        margin-right: 15px; /* Spasi antara logo dan tombol toggle */
+        margin-right: 15px;
     }
     
     #sidebar.mini .brand-text { 
@@ -112,7 +110,6 @@
         margin-right: 0;
     }
 
-    /* Toggle Button */
     #sidebarToggle {
         width: 34px;
         height: 34px;
@@ -130,7 +127,6 @@
     }
     #sidebarToggle:hover { background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); border-color: var(--accent-gold); }
     
-    /* Keadaan saat Mini: Geser tombol ke tengah header */
     #sidebar.mini .sidebar-header {
         justify-content: center;
         padding: 30px 0;
@@ -175,11 +171,13 @@
     .content-page { position: absolute; inset: 0; visibility: hidden; opacity: 0; transition: opacity 0.4s; z-index: 1; }
     .content-page.active { visibility: visible; opacity: 1; z-index: 5; }
 
-    /* --- SLIDES FRAME --- */
+    /* --- SLIDES & VIDEO FRAME --- */
     .slides-wrapper { position: absolute; inset: 0; background: #000; }
-    .slide-frame { position: absolute; width: 100%; height: 100%; border: none; transition: opacity 0.8s; }
+    .slide-frame, .video-sync-player { position: absolute; width: 100%; height: 100%; border: none; transition: opacity 0.8s; }
     .slide-active { z-index: 10; opacity: 1; }
     .slide-hidden { z-index: 5; opacity: 0; }
+    
+    .video-sync-player { z-index: 15; background: #000; display: none; object-fit: contain; }
 
     /* --- TICKER --- */
     .news-ticker { 
@@ -208,7 +206,7 @@
 
     /* --- CHAT STYLES --- */
     .chat-container { height: 100%; display: flex; flex-direction: column; background: #000; padding: 20px; padding-top: 70px; }
-    #messages-list { flex: 1; overflow-y: auto; padding: 0; list-style: none; margin-bottom: 20px; }
+    #messages-list { flex: 1; overflow-y: auto; padding: 0; list-style: none; margin-bottom: 20px; scroll-behavior: smooth; }
     .msg-item { margin-bottom: 12px; }
     .msg-bubble { background: #1f2937; padding: 12px 16px; border-radius: 16px; border-bottom-left-radius: 4px; display: inline-block; max-width: 85%; }
     .msg-user { color: var(--accent-gold); font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 4px; }
@@ -304,6 +302,7 @@
             <div class="slides-wrapper">
                 <iframe id="frameA" class="slide-frame slide-active" allowfullscreen></iframe>
                 <iframe id="frameB" class="slide-frame slide-hidden" allowfullscreen></iframe>
+                <video id="videoSyncPlayer" class="video-sync-player" playsinline muted></video>
             </div>
             <div id="newsTicker" class="news-ticker">
                 <div class="ticker-label">ANNOUNCEMENT</div>
@@ -341,7 +340,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import { getDatabase, ref, onValue, set, push, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+    import { getDatabase, ref, onValue, set, push, query, limitToLast, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB0sPJBi9ITypeztIhtfXwTT5bSc5LbVI8",
@@ -358,16 +357,18 @@
     const slideRef = ref(db, "slide");
     const adminChatRef = ref(db, "chat/adminMessage");
     const participantChatRef = ref(db, "chat/participantMessages");
+    const videoSyncRef = ref(db, "videoSync");
 
     const baseUrl = "https://docs.google.com/presentation/d/e/2PACX-1vRW29GKiX5OJ6paiSw2lD654cT2qPhSb-VFCfK9K-PAHwNvDDKP-2J2XHahTwr3_aXkjpR1Fa-4M4-h/pubembed?rm=minimal&start=false&loop=false&delayms=0&slide=";
     
     let activeFrame = document.getElementById("frameA");
     let hiddenFrame = document.getElementById("frameB");
+    const videoPlayer = document.getElementById("videoSyncPlayer");
     let lastSlide = 0;
     let userName = localStorage.getItem('slydeGoUser') || "";
 
     window.onload = () => {
-        startCountdown(new Date(2025, 11, 28, 10, 0, 0).getTime());
+        startCountdown("2025-12-28 10:00:00");
         if (userName) enterApp();
     };
 
@@ -392,12 +393,26 @@
         document.getElementById("welcomeBgContainer").style.display = "none";
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("mainContainer").style.display = "flex";
+        initParticipantStatus();
         initSlides();
+        initVideoSync();
         initTicker();
         initChat();
     }
 
-    // Sidebar Toggle
+    function initParticipantStatus() {
+        const myStatusRef = ref(db, `participants/${userName.replace(/\s/g, '_')}`);
+        const updateStatus = () => {
+            set(myStatusRef, {
+                name: userName,
+                lastSeen: Date.now(),
+                platform: navigator.platform
+            });
+        };
+        updateStatus();
+        setInterval(updateStatus, 10000); 
+    }
+
     const sidebar = document.getElementById("sidebar");
     const sidebarToggle = document.getElementById("sidebarToggle");
     sidebarToggle.onclick = () => {
@@ -407,7 +422,20 @@
     function initSlides() {
         onValue(slideRef, (snapshot) => {
             const data = snapshot.val();
-            if (!data || data.current === lastSlide) return;
+            if (!data) return;
+            
+            if (data.current === 'video-mode') return;
+
+            if (data.current === lastSlide) {
+                // Pastikan jika mode slide aktif, video disembunyikan
+                videoPlayer.style.display = "none";
+                videoPlayer.pause();
+                return;
+            }
+
+            videoPlayer.style.display = "none";
+            videoPlayer.pause();
+
             hiddenFrame.src = baseUrl + data.current;
             hiddenFrame.onload = () => {
                 hiddenFrame.classList.replace('slide-hidden', 'slide-active');
@@ -415,6 +443,40 @@
                 [activeFrame, hiddenFrame] = [hiddenFrame, activeFrame];
                 lastSlide = data.current;
             };
+        });
+    }
+
+    function initVideoSync() {
+        onValue(videoSyncRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.active) {
+                // Tampilkan video player
+                videoPlayer.style.display = "block";
+                
+                // Jika sumber video berubah, update src
+                if (videoPlayer.src !== data.src) {
+                    videoPlayer.src = data.src;
+                    videoPlayer.load(); // Load source baru
+                }
+                
+                if (data.state === 'playing') {
+                    // Coba unmuted jika browser mengizinkan
+                    videoPlayer.muted = false; 
+                    videoPlayer.play().catch(e => {
+                        console.log("Autoplay unmuted blocked, fallback to muted play");
+                        videoPlayer.muted = true;
+                        videoPlayer.play();
+                    });
+                } else if (data.state === 'paused') {
+                    videoPlayer.pause();
+                } else if (data.state === 'stopped') {
+                    videoPlayer.pause();
+                    videoPlayer.currentTime = 0;
+                }
+            } else {
+                videoPlayer.style.display = "none";
+                videoPlayer.pause();
+            }
         });
     }
 
@@ -437,7 +499,8 @@
         onValue(q, (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                const msg = Object.values(data)[0].message;
+                const msgObj = Object.values(data)[0];
+                const msg = msgObj.message;
                 if (msg !== lastMsg) {
                     lastMsg = msg; loopCount = 0;
                     ticker.classList.remove("hide-anim");
@@ -456,7 +519,14 @@
         
         const sendMsg = () => {
             const val = input.value.trim();
-            if (val) { push(participantChatRef, { name: userName, message: val, timestamp: Date.now() }); input.value = ""; }
+            if (val) { 
+                push(participantChatRef, { 
+                    name: userName, 
+                    message: val, 
+                    timestamp: serverTimestamp() 
+                }); 
+                input.value = ""; 
+            }
         };
         
         if (btn) btn.onclick = sendMsg;
@@ -467,7 +537,8 @@
             if (!list) return;
             list.innerHTML = "";
             if (data) {
-                Object.values(data).sort((a,b) => a.timestamp - b.timestamp).forEach(m => {
+                const sorted = Object.values(data).sort((a,b) => a.timestamp - b.timestamp);
+                sorted.forEach(m => {
                     const li = document.createElement("li");
                     li.className = "msg-item";
                     li.innerHTML = `<div class="msg-bubble"><span class="msg-user">${m.name}</span><span class="msg-text">${m.message}</span></div>`;
@@ -481,7 +552,10 @@
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.onclick = () => {
-            if (confirm("Keluar dari sesi acara?")) { localStorage.removeItem('slydeGoUser'); window.location.reload(); }
+            if (confirm("Keluar dari sesi acara?")) { 
+                localStorage.removeItem('slydeGoUser'); 
+                window.location.reload(); 
+            }
         };
     }
 
@@ -512,12 +586,10 @@
         };
     }
 
-    // FUNGSI COUNTDOWN BARU (Menerima string tanggal)
     function startCountdown(targetDateString) {
         const timerEl = document.getElementById("lockdownCountdownTimer");
         if (!timerEl) return;
 
-        // Mengonversi string tanggal menjadi timestamp
         const targetTime = new Date(targetDateString).getTime();
 
         const update = () => {
@@ -545,12 +617,6 @@
         update();
         setInterval(update, 1000);
     }
-
-    // Inisialisasi Countdown dengan Format Tanggal
-    // Contoh: "2025-12-26" atau "2025-12-26 10:00:00"
-    window.onload = () => {
-        startCountdown("2025-12-28 10:00:00");
-    };
   </script>
 </body>
 </html>
