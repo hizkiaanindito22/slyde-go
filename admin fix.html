@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide-sync ADMIN (Fixed Final)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #1e293b;
+            --card-bg: #2d384c;
+            --primary-color: #fdbb2d;
+            --secondary-text: #94a3b8;
+            --text-color: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary-color: #1a2a6c;
+            --secondary-text: #5f6368;
+            --text-color: #202124;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-color); color: var(--text-color);
+            min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; transition: background 0.3s;
+        }
+
+        .card {
+            background: var(--card-bg); border-radius: 16px; box-shadow: var(--shadow);
+            padding: 40px; width: 100%; max-width: 1000px; margin: auto; border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        h1 { font-family: 'Playfair Display', serif; color: var(--primary-color); text-align: center; margin-bottom: 30px; }
+
+        .display-container {
+            position: relative; width: 100%; height: 500px; background: #000; border-radius: 12px;
+            overflow: hidden; margin-bottom: 20px; border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #slideFrame, #youtubeFrame { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
+
+        .mode-selector { display: flex; gap: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 10px; }
+        .mode-btn { flex: 1; padding: 12px; border-radius: 8px; font-weight: 600; background: transparent; color: var(--secondary-text); border: none; cursor: pointer; transition: 0.3s; }
+        .mode-btn.active { background: var(--primary-color); color: #1e293b; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        .controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 15px; }
+        .control-row { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
+
+        button { background-color: var(--primary-color); color: #1e293b; border: none; border-radius: 8px; padding: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        button:hover { transform: translateY(-2px); opacity: 0.9; }
+        .nav-btn { background-color: #334155; color: #fff; }
+        .danger { background-color: var(--danger-color); color: white; }
+        .success { background-color: var(--success-color); color: white; }
+
+        select, input, textarea { padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid var(--secondary-text); width: 100%; }
+
+        .tab { display: flex; justify-content: center; margin-bottom: 30px; border-bottom: 2px solid var(--secondary-text); }
+        .tab button { background: transparent; color: var(--secondary-text); border-radius: 0; border-bottom: 3px solid transparent; width: auto; padding: 10px 20px; }
+        .tab button.active { color: var(--primary-color); border-bottom: 3px solid var(--primary-color); }
+
+        .slide-queue-container { margin-top: 25px; padding: 15px; background: rgba(0, 0, 0, 0.4); border-radius: 12px; border: 1px dashed var(--primary-color); }
+        .slide-queue-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: var(--secondary-text); display: block; font-weight: 600; }
+        .slide-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scroll-behavior: smooth; min-height: 120px; }
+        .slide-list::-webkit-scrollbar { height: 8px; }
+        .slide-list::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+        
+        .slide-item { flex: 0 0 160px; cursor: pointer; transition: 0.3s; position: relative; border-radius: 8px; overflow: hidden; border: 3px solid transparent; background: #000; aspect-ratio: 16/9; }
+        .slide-item.active { border-color: var(--primary-color); box-shadow: 0 0 15px rgba(253, 187, 45, 0.4); transform: scale(1.05); z-index: 2; }
+        
+        .slide-preview-wrapper { width: 400%; height: 400%; transform: scale(0.25); transform-origin: 0 0; pointer-events: none; }
+        .slide-preview-wrapper iframe { width: 100%; height: 100%; border: none; }
+        .slide-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: white; font-size: 10px; padding: 4px; text-align: center; font-weight: bold; z-index: 10; }
+
+        .status-dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; background: #666; }
+        .status-online { background-color: var(--success-color); box-shadow: 0 0 8px var(--success-color); }
+        
+        ul { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; }
+        li { background: rgba(255,255,255,0.05); padding: 10px; margin-bottom: 5px; border-radius: 5px; font-size: 0.9rem; }
+
+        @media (max-width: 800px) { .controls { grid-template-columns: repeat(2, 1fr); } .display-container { height: 250px; } }
+    </style>
+</head>
+
+<body>
+    <button id="themeToggle" style="position:absolute; top:20px; right:20px; width:auto; padding: 8px 15px; z-index: 100;">☀️ Mode</button>
+
+    <div id="loginScreen">
+        <div id="loginBox" style="text-align:center; background: var(--card-bg); padding:40px; border-radius:16px; width:350px;">
+            <h2>🔐 Login Admin</h2>
+            <input type="password" id="adminPass" placeholder="Password:..." style="margin-bottom:15px;"/>
+            <button id="loginBtn" style="width:100%">Masuk</button>
+            <p id="loginError" style="color:red; display:none; margin-top:10px;">Password salah!</p>
+        </div>
+    </div>
+
+    <div class="card" id="adminPanel" style="display:none;">
+        <h1>Slide-sync ADMIN</h1>
+        
+        <div class="tab">
+            <button id="tabKontrol" class="active">🎛️ Kontrol</button>
+            <button id="tabPeserta">👥 Peserta</button>
+            <button id="tabChat">💬 Chat</button>
+            <button id="tabMonitor">📊 Monitor</button>
+        </div>
+
+        <div id="kontrolSection">
+            <div class="mode-selector">
+                <button id="modeSlideBtn" class="mode-btn active">📄 Google Slide</button>
+                <button id="modeYoutubeBtn" class="mode-btn">🎬 YouTube</button>
+            </div>
+            <div class="display-container">
+                <iframe id="slideFrame" src=""></iframe>
+                <iframe id="youtubeFrame" src="" style="display:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+            <div id="slideControlsGroup">
+                <div class="control-row">
+                    <label>🎬 Transisi:</label>
+                    <select id="transisiSelect">
+                        <option value="fade">✨ Fade</option>
+                        <option value="blur">🌫️ Blur</option>
+                        <option value="flip">🔄 Flip</option>
+                    </select>
+                </div>
+                <div class="controls">
+                    <button id="prevBtn" class="nav-btn">⬅️ PREV</button>
+                    <button id="nextBtn" class="nav-btn">NEXT ➡️</button>
+                    <button id="homeBtn">🏠 HOME</button>
+                    <button id="restoreBtn" class="success">🔁 RESTORE</button>
+                    <button id="blankBtn" class="danger">⬜ BLANK</button>
+                </div>
+                <p style="text-align:center;">Slide Aktif: <b id="statusSlide" style="color:var(--primary-color)">1</b></p>
+                <div class="slide-queue-container">
+                    <span class="slide-queue-title">🎞️ Antrian Visual (Thumbnail)</span>
+                    <div id="slideQueue" class="slide-list"></div>
+                </div>
+            </div>
+            <div id="youtubeControlsGroup" style="display:none;">
+                <input type="text" id="ytUrlInput" placeholder="Paste link YouTube..." style="margin-bottom:15px;" />
+                <div style="display:flex; gap:10px;">
+                    <button id="btnPlayYT" class="success" style="flex:2;">🚀 Publish</button>
+                    <button id="btnStopYT" class="danger" style="flex:1;">🛑 Stop</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="pesertaSection" style="display:none;">
+            <h2>👥 Peserta Online (<span id="activeUsersVal">0</span>)</h2>
+            <ul id="participantsList"></ul>
+        </div>
+
+        <div id="chatSection" style="display:none; grid-template-columns: 1fr 1fr; gap:20px;">
+            <div>
+                <h2>📢 Running Text</h2>
+                <textarea id="adminMessageInput" placeholder="Ketik pesan..." style="height:100px; margin-bottom:10px;"></textarea>
+                <button id="sendAdminMessageBtn" style="width:100%;">Kirim</button>
+            </div>
+            <div>
+                <h2>💬 Pesan Masuk</h2>
+                <ul id="participantChatList"></ul>
+                <button class="danger" id="clearChatBtn" style="width:100%; margin-top:10px;">Hapus Chat</button>
+            </div>
+        </div>
+
+        <div id="monitorSection" style="display:none;">
+            <h2>📊 Monitoring</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; text-align:center;">
+                <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:10px;"><span id="serverStatusDot" class="status-dot"></span><span id="serverStatusText">Connecting...</span></div>
+                <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:10px;"><div id="latencyVal" style="font-size:1.5em; color:var(--primary-color)">0 ms</div>Latency</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB0sPJBi9ITypeztIhtfXwTT5bSc5LbVI8",
+            authDomain: "testslide1.firebaseapp.com",
+            databaseURL: "https://testslide1-default-rtdb.firebaseio.com",
+            projectId: "testslide1",
+            storageBucket: "testslide1.firebasestorage.app",
+            messagingSenderId: "405700914757",
+            appId: "1:405700914757:web:250c2b1e8ca958ca68bd2c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        // DEFINISIKAN SEMUA REFERENCE
+        const slideRef = ref(db, "slide");
+        const youtubeSyncRef = ref(db, "youtubeSync");
+        const adminChatRef = ref(db, "chat/adminMessage");
+        const participantChatRef = ref(db, "chat/participantMessages");
+        const connectedRef = ref(db, ".info/connected");
+        const participantsRef = ref(db, "participants");
+
+        let currentSlide = 1;
+        let lastNormalSlide = 1;
+        const totalSlidesCount = 30; 
+        const slideBase = "https://docs.google.com/presentation/d/e/2PACX-1vRW29GKiX5OJ6paiSw2lD654cT2qPhSb-VFCfK9K-PAHwNvDDKP-2J2XHahTwr3_aXkjpR1Fa-4M4-h/pubembed?rm=minimal&start=false&loop=false&delayms=0&slide=";
+
+        const slideFrame = document.getElementById("slideFrame");
+        const youtubeFrame = document.getElementById("youtubeFrame");
+        const queueList = document.getElementById("slideQueue");
+
+        // LOGIN
+        document.getElementById("loginBtn").onclick = () => {
+            if (document.getElementById("adminPass").value === "admin123") {
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("adminPanel").style.display = "block";
+                updateSlide();
+                renderSlideQueue(); 
+                startMonitoring();
+                initChatListeners();
+            } else { document.getElementById("loginError").style.display = "block"; }
+        };
+
+        // VISUAL QUEUE
+        function renderSlideQueue() {
+            queueList.innerHTML = "";
+            for (let i = 1; i <= totalSlidesCount; i++) {
+                const item = document.createElement("div");
+                item.className = `slide-item ${currentSlide === i ? 'active' : ''}`;
+                item.innerHTML = `<div class="slide-preview-wrapper"><iframe src="${slideBase}${i}"></iframe></div><div class="slide-label">Slide ${i}</div>`;
+                item.onclick = () => { lastNormalSlide = currentSlide; currentSlide = i; updateSlide(); };
+                queueList.appendChild(item);
+            }
+            const activeItem = queueList.querySelector('.active');
+            if (activeItem) activeItem.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        }
+
+        function updateSlide() {
+            slideFrame.src = slideBase + currentSlide;
+            set(slideRef, { current: currentSlide, transition: document.getElementById("transisiSelect").value });
+            document.getElementById("statusSlide").innerText = currentSlide;
+            renderSlideQueue();
+        }
+
+        // NAVIGATION
+        document.getElementById("nextBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide++; updateSlide(); };
+        document.getElementById("prevBtn").onclick = () => { if(currentSlide > 1) { lastNormalSlide = currentSlide; currentSlide--; updateSlide(); } };
+        document.getElementById("homeBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide = 1; updateSlide(); };
+        document.getElementById("blankBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide = 7; updateSlide(); };
+        document.getElementById("restoreBtn").onclick = () => { currentSlide = lastNormalSlide; updateSlide(); };
+
+        // YOUTUBE
+        function extractID(url) {
+            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?v=)|(\&v=)|(\/live\/))([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[9].length === 11) ? match[9] : null;
+        }
+
+        document.getElementById("btnPlayYT").onclick = () => {
+            const id = extractID(document.getElementById("ytUrlInput").value);
+            if (id) {
+                youtubeFrame.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1`;
+                set(youtubeSyncRef, { active: true, videoId: id, startTime: Date.now() });
+            }
+        };
+
+        document.getElementById("btnStopYT").onclick = () => { youtubeFrame.src = ""; set(youtubeSyncRef, { active: false }); };
+
+        // TABS LOGIC (FIXED)
+        const tabButtons = document.querySelectorAll(".tab button");
+        const sections = {
+            tabKontrol: "kontrolSection",
+            tabPeserta: "pesertaSection",
+            tabChat: "chatSection",
+            tabMonitor: "monitorSection"
+        };
+
+        tabButtons.forEach(btn => {
+            btn.onclick = () => {
+                tabButtons.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                
+                Object.values(sections).forEach(id => document.getElementById(id).style.display = "none");
+                const targetId = sections[btn.id];
+                document.getElementById(targetId).style.display = (btn.id === 'tabChat') ? 'grid' : 'block';
+            };
+        });
+
+        // CHAT & RUNNING TEXT
+        function initChatListeners() {
+            document.getElementById("sendAdminMessageBtn").onclick = () => {
+                const msg = document.getElementById("adminMessageInput").value;
+                if (msg) {
+                    push(adminChatRef, { message: msg, timestamp: Date.now() });
+                    document.getElementById("adminMessageInput").value = "";
+                }
+            };
+
+            onValue(participantChatRef, (s) => {
+                const list = document.getElementById("participantChatList");
+                list.innerHTML = "";
+                const d = s.val();
+                if (d) {
+                    Object.entries(d).reverse().forEach(([key, m]) => {
+                        const li = document.createElement("li");
+                        li.innerText = `${m.name || 'User'}: ${m.message}`;
+                        list.appendChild(li);
+                    });
+                }
+            });
+
+            document.getElementById("clearChatBtn").onclick = () => { if(confirm("Hapus semua chat?")) set(participantChatRef, null); };
+            
+            // Listener Peserta Online
+            onValue(participantsRef, (s) => {
+                const data = s.val();
+                const list = document.getElementById("participantsList");
+                list.innerHTML = "";
+                if (data) {
+                    const count = Object.keys(data).length;
+                    document.getElementById("activeUsersVal").innerText = count;
+                    Object.values(data).forEach(p => {
+                        const li = document.createElement("li");
+                        li.innerText = `👤 ${p.name || 'Anonymous'}`;
+                        list.appendChild(li);
+                    });
+                } else {
+                    document.getElementById("activeUsersVal").innerText = "0";
+                }
+            });
+        }
+
+        // MONITORING
+        function startMonitoring() {
+            onValue(connectedRef, (snap) => {
+                const dot = document.getElementById("serverStatusDot");
+                const txt = document.getElementById("serverStatusText");
+                dot.className = snap.val() ? "status-dot status-online" : "status-dot";
+                txt.innerText = snap.val() ? "Online" : "Offline";
+            });
+            setInterval(() => {
+                const start = Date.now();
+                set(ref(db, "ping"), start).then(() => { 
+                    document.getElementById("latencyVal").innerText = (Date.now() - start) + " ms"; 
+                });
+            }, 3000);
+        }
+
+        // THEME & MODES
+        document.getElementById("themeToggle").onclick = () => {
+            const html = document.documentElement;
+            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        };
+
+        document.getElementById("modeSlideBtn").onclick = function() {
+            this.classList.add("active"); document.getElementById("modeYoutubeBtn").classList.remove("active");
+            document.getElementById("slideControlsGroup").style.display = "block";
+            document.getElementById("youtubeControlsGroup").style.display = "none";
+            slideFrame.style.display = "block"; youtubeFrame.style.display = "none";
+            set(youtubeSyncRef, { active: false });
+        };
+
+        document.getElementById("modeYoutubeBtn").onclick = function() {
+            this.classList.add("active"); document.getElementById("modeSlideBtn").classList.remove("active");
+            document.getElementById("slideControlsGroup").style.display = "none";
+            document.getElementById("youtubeControlsGroup").style.display = "block";
+            slideFrame.style.display = "none"; youtubeFrame.style.display = "block";
+        };
+    </script>
+</body>
+</html>
