@@ -206,7 +206,7 @@
 
         let currentSlide = 1;
         let lastNormalSlide = 1;
-        const totalSlidesCount = 30; 
+        const totalSlidesCount = 60; 
         const slideBase = "https://docs.google.com/presentation/d/e/2PACX-1vRW29GKiX5OJ6paiSw2lD654cT2qPhSb-VFCfK9K-PAHwNvDDKP-2J2XHahTwr3_aXkjpR1Fa-4M4-h/pubembed?rm=minimal&start=false&loop=false&delayms=0&slide=";
 
         const slideFrame = document.getElementById("slideFrame");
@@ -215,7 +215,7 @@
 
         // LOGIN
         document.getElementById("loginBtn").onclick = () => {
-            if (document.getElementById("adminPass").value === "admin123") {
+            if (document.getElementById("adminPass").value === "ujangKedu") {
                 document.getElementById("loginScreen").style.display = "none";
                 document.getElementById("adminPanel").style.display = "block";
                 updateSlide();
@@ -250,7 +250,7 @@
         document.getElementById("nextBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide++; updateSlide(); };
         document.getElementById("prevBtn").onclick = () => { if(currentSlide > 1) { lastNormalSlide = currentSlide; currentSlide--; updateSlide(); } };
         document.getElementById("homeBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide = 1; updateSlide(); };
-        document.getElementById("blankBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide = 7; updateSlide(); };
+        document.getElementById("blankBtn").onclick = () => { lastNormalSlide = currentSlide; currentSlide = 57; updateSlide(); };
         document.getElementById("restoreBtn").onclick = () => { currentSlide = lastNormalSlide; updateSlide(); };
 
         // YOUTUBE
